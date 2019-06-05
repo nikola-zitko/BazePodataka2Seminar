@@ -1,9 +1,10 @@
 import itertools
-def mainmenu():
+def mainmenu(R,Fmin):
     print("___________________")
     print("____Baze Podataka 2____")
-    print("1. Unesite relacijsku shema")
-    print("2. Racunanje primarnog kljuca")
+    for x in range(len(R)):
+        print(str(x+1)+". R = "+R[x] + "; Fmin = " + ', '.join(Fmin[x]))
+
     
 def addFmin(Fmin, fo):
     Fmin.append(fo)
@@ -13,9 +14,18 @@ def convertTuple(tup):
     return str
 
 
-R = "ABCDEF"
-Fmin = ["A->B", "A->C", "B->AECD", "C->BF", "E->BD"]
+
+R = ["ABCD","ABCDE","ABCDEFGH","AB","ABCDE","ABCDEF","ABC","ABCDEFGHI","ABCDE","ABCD"]
+Fmin = [["A->B", "A->C"],["AB->D","B->E","C->AB"],["AB->E","C->FG","E->AH"],["A->A","A->B","B->A","B->B"],["A->BC","C->E","D->E","B->D"],
+["A->BCD","B->E","C->DEF","EF->BD"],["A->B","C->AB","B->BC"],["A->BCD","BC->ADE","FAG->A","EF->G","F->A"],["A->E","B->D","C->C","E->AB"],["A->A","B->B","C->C","D->D","ABCD->ABCD"]]
 canonical_form = []
+
+mainmenu(R, Fmin)
+odabir = int(input("Unesite broj R sheme: "))
+
+Fmin = Fmin[odabir-1]
+R = R[odabir-1]
+
 for att in Fmin:
     x = att.split('->')
     if(len(x[1])>1):
@@ -26,6 +36,26 @@ for att in Fmin:
 
 print(Fmin)
 print(canonical_form)
+
+RodF = ""
+for att in canonical_form:
+    x = att.split('->')
+    if(x[0] not in RodF):
+        RodF = RodF + x[0]
+    if(x[1] not in RodF):
+        RodF = RodF + x[1]
+
+print("RodF je ")
+RodF = ''.join(sorted(RodF))
+print(RodF)
+
+K1 = R
+K1=K1.replace(RodF,'')
+
+R = R.replace(K1,'')
+
+print(K1)
+
 
 L = []
 #D = []
@@ -64,11 +94,13 @@ for potential_candidate in potential_key_candidates: #moguci kandidati
                         #tmp.append(f_dependency.split('->')[1])
                         temp = temp + f_dependency.split('->')[1]
                         isUpdated = True
-                        print(temp)
-                        if ''.join(sorted(temp)) == R:
-                            K.append(potential_candidate)
                         
-    print()
+                        if ''.join(sorted(temp)) == R:
+                            
+                            K.append(potential_candidate+K1)
+                            
+                        
+    
     
 
 print(K)
