@@ -5,7 +5,7 @@ def convertTuple(tup):
 
 
 R = "ABCDEF"
-Fmin = ["A->B", "A->C", "B->CD", "C->BF", "E->BD"]
+Fmin = ["A->B", "A->CD", "A->C", "C->BF", "E->BD"]
 K=["A", "B", "C", "E"]
 canonical_form = []
 for att in Fmin:
@@ -19,14 +19,14 @@ for att in Fmin:
 print(Fmin)
 print(canonical_form)
 
-jel_treba_noramlizirati = False
+jel_treba_normlizirati = False
 for fo in Fmin:
-    dobar = False
+    dobar = True
     x,y=fo.split('->')
     #Prvi uvjet
-    for att in x:
-        if att in y:
-            dobar = True
+    for att in y:
+        if att not in x:
+            dobar = False
     
     #Drugi uvjet
     if not dobar:
@@ -35,81 +35,54 @@ for fo in Fmin:
             for att in temp_k:
                 if att not in x:
                     dobar = False
+            if dobar:
+                break
+            
         #Treci uvjet
         if not dobar:
             for temp_k in K:
                 dobar = True
                 for att in y:
                     if att not in temp_k:
-                        dobar = False 
+                        dobar = False
+                if dobar:
+                    break
     #Provjera jel oke
     if not dobar:
-        jel_treba_noramlizirati = True
+        jel_treba_normlizirati = True
 
-if not jel_treba_noramlizirati
-        print("Vec je u 3. NF")
-        return
+if not jel_treba_normlizirati:
+    print("Vec je u 3. NF")
 
 noviR=[]
+
 for fo in Fmin:
+    fo = ''.join(set(fo.split('->')))
+    isIncluded = False
+    for temp_R in noviR:
+        isIncluded = True
+        for att in fo:
+            if att not in temp_R:
+                isIncluded = False
+        if isIncluded:
+            break
     
+    if not isIncluded:
+        noviR.append(fo)
 
-
-
-
-
-
-
-'''
-L = []
-#D = []
-for FO in Fmin:
-    livi = (FO.split('->'))[0]
-    desni = (FO.split('->'))[1]
-
-    for att in livi:
-        if att not in L:
-            L.append(att)
-    """for att in desni:
-        if att not in D:
-            D.append(att)
-    """
-print(L)
-
-
-potential_key_candidates = []
-
-for att in range(1, len(L)+1):
-    for subset in itertools.combinations(L, att):
-        potential_key_candidates.append(convertTuple(subset))
-print("Key candidates: " + ', '.join(potential_key_candidates))
-
-K = []
-tmp = []
-for potential_candidate in potential_key_candidates: #moguci kandidati
-    temp = potential_candidate
-    isUpdated = True
-    while(isUpdated):
-        isUpdated = False
-        for attribute in temp: #Svako slovo posebno
-            for f_dependency in canonical_form: #FO
-                if(attribute == f_dependency.split('->')[0]):
-                    if f_dependency.split('->')[1] not in temp:
-                        #tmp.append(f_dependency.split('->')[1])
-                        temp = temp + f_dependency.split('->')[1]
-                        isUpdated = True
-                        print(temp)
-                        if ''.join(sorted(temp)) == R:
-                            K.append(potential_candidate)
-                        
-    print()
-    
-
-print(K)
-for x in K:
-    if(len(x) == len(K[0])):
-        print(x)
-    else:
+#Dodaj kljuc ako ga vec nema
+sadrziKljuc = False
+for kljuc in K:
+    kljuc = ''.join(sorted(kljuc))
+    for fo in Fmin:
+        fo = ''.join(sorted(set(fo.split('->'))))
+        if kljuc in fo:
+            sadrziKljuc = True
+            break
+    if sadrziKljuc:
+        print('Kljuc je vec ukljucen, a on je: ' + kljuc)
         break
-
-'''
+if not sadrziKljuc:
+    noviR.append(K[0])
+    
+print(noviR)
