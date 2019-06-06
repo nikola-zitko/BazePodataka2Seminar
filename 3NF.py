@@ -47,42 +47,43 @@ def checkForm(R, Fmin, K):
     return True
 
 def normalize(R, Fmin, K):
-    noviR=[]
+    newR=[]
     for fo in Fmin:
+        originalFO = fo
         fo = ''.join(set(fo.split('->')))
         isIncluded = False
-        for temp_R in noviR:
+        for temp_R in newR:
             isIncluded = True
             for att in fo:
                 if att not in temp_R:
                     isIncluded = False
 
             if isIncluded:
+                print(originalFO + " je ukljucen u " + temp_R)
                 break
 
         if not isIncluded:
-            noviR.append(fo)
+            print(originalFO + " nije ukljucen, pa ga dodajemo.")
+            newR.append(fo)
+    print()
 
     #Dodaj kljuc ako ga vec nema
-    #Neradi ako se redosljed ne podudara/Ima neki drugi att izmedu
-    #Kako i gdje cemo spremat rezultate? Ili da ostane samo ispis novog R-a?
-    keyIncluded = False
     for key in K:
-        key = ''.join(sorted(key))
         for fo in Fmin:
-            fo = ''.join(sorted(set(fo.split('->'))))
-            if key in fo:
-                keyIncluded = True
-                break
+            keyIncluded = True
+            fo = ''.join(set(fo.split('->')))
+            for att in key:
+                if att not in fo:
+                    keyIncluded = False
+                    break
 
-        if keyIncluded:
-            print('Kljuc je vec ukljucen, a on je: ' + key)
-            break
+            if keyIncluded:
+                print('Kljuc ' + key + ' je vec ukljucen.')
+                return newR
 
-    if not keyIncluded:
-        noviR.append(K[0])
-
-    return noviR
+    print('Ni jedan kljuc nije ukljucen pa dodajemo kljuc: ' + K[0])
+    newR.append(K[0])
+    return newR
 
 #Glavni program
 
@@ -100,27 +101,62 @@ while(True):
         "Fmin: " + ', '.join(Fmin[i]) +
         "\nK: " + ', '.join(K[i]) + "\n")
 
+    print('Operacije su "Dodaj", "Izbrisi" i "Pokreni".')
     userChoice = input("Upisite zeljenu operaciju: ")
     if (userChoice.lower() == "dodaj"):
-        pass #Unos
+        #Unos
+        userR = input("Unestite R: ").upper()
+        userFmin = []
+        userKeys= []
+        while(True):
+            userFminInput1 = input("Unesite lijevu stranu FO ili kraj za kraj unosa: ")
+            if userFminInput1.lower() == "kraj":
+                break
+            userFminInput2 = input("Unesite desnu stranu FO: ")
+            userFmin.append(userFminInput1 + '->' + userFminInput2)
 
-    elif (userChoice.lower() == "makni"):
-        pass #Brisanje
+        while(True):
+            userKeyInput = input("Unesite kljuc ili kraj za kraj unosa: ")
+            if userKeyInput.lower() == "kraj":
+                break
+            userKeys.append(userKeyInput)
+        R.append(userR)
+        Fmin.append(userFmin)
+        K.append(userKeys)
 
-    elif (userChoice.lower() == "izvedi"):
+    elif (userChoice.lower() == "izbrisi"):
+        #Brisanje izabranog elemenata
+        isValidInput = False;
+        while not isValidInput:
+            izbor=int(input("Unesite broj RS koje zelite izbrisati: "))
+            if (izbor > 0 and izbor <= len(R)):
+                izbor -= 1
+                isValidInput = True
+            else:
+                print("Unesite ispravan broj.")
+
+        del R[izbor]
+        del Fmin[izbor]
+        del K[izbor]
+
+    elif (userChoice.lower() == "pokreni"):
         for i in range(len(R)):
             print(str(i + 1) + ".\n" +
             "R: " + R[i]+ "\n" +
             "Fmin: " + ', '.join(Fmin[i]) +
             "\nK: " + ', '.join(K[i]) + "\n")
             if checkForm(R[i], Fmin[i], K[i]):
-                print("Vec je u 3. NF")
+                print("\nVec je u 3. NF")
 
             else:
-                print(normalize(R[i], Fmin[i], K[i]))
+                print()
+                print('Novi R je: ' + ', '.join(normalize(R[i], Fmin[i], K[i])))
 
             print()
         break
 
     elif (userChoice.lower() == "kraj"):
         break
+
+    else:
+        print("Unesite valjdanu operaciju.")
