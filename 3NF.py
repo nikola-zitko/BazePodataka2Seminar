@@ -13,6 +13,7 @@ def checkForm(R, Fmin, K):
                 isValid = False
 
         if isValid:
+            print("Za " + fo + " je prvi uvjet ispunjen.")
             continue
 
         #Drugi uvjet
@@ -21,11 +22,11 @@ def checkForm(R, Fmin, K):
             for att in temp_k:
                 if att not in leftSide:
                     isValid = False
-
             if isValid:
                 break
 
         if isValid:
+            print("Za " + fo + " je drugi uvjet ispunjen.")
             continue
 
         #Treci uvjet
@@ -35,16 +36,17 @@ def checkForm(R, Fmin, K):
                 if att not in temp_k:
                     #Zadnji uvjet pa ako on nije ispunjen mozemo odmah vratit False
                     isValid = False
-
             if isValid:
                 break
 
         if not isValid:
+            print("Za " + fo + " niti jedan uvjet nije ispunjen.")
             return False
 
+    print("Za " + fo + " je treci uvjet ispunjen.")
     return True
 
-def normalize(R, Fmin):
+def normalize(R, Fmin, K):
     noviR=[]
     for fo in Fmin:
         fo = ''.join(set(fo.split('->')))
@@ -62,6 +64,8 @@ def normalize(R, Fmin):
             noviR.append(fo)
 
     #Dodaj kljuc ako ga vec nema
+    #Neradi ako se redosljed ne podudara/Ima neki drugi att izmedu
+    #Kako i gdje cemo spremat rezultate? Ili da ostane samo ispis novog R-a?
     keyIncluded = False
     for key in K:
         key = ''.join(sorted(key))
@@ -74,17 +78,49 @@ def normalize(R, Fmin):
         if keyIncluded:
             print('Kljuc je vec ukljucen, a on je: ' + key)
             break
-            
+
     if not keyIncluded:
         noviR.append(K[0])
 
     return noviR
 
-R = "ABCDEF"
-Fmin = ["A->B", "A->CD", "A->C", "C->BF", "E->BD"]
-K=["A", "B", "C", "E"]
+#Glavni program
 
-if checkForm(R, Fmin, K):
-    print("Vec je u 3. NF")
-else:
-    print(normalize(R, Fmin))
+R = ["ABC", "ABCD", "ABCDEF","ABCDEFG", "ABCDEF"]
+Fmin = [["A->B","B->C"], ["AC->B", "C->D", "B->A"], ["A->B", "A->CD", "A->C", "C->BF", "E->BD"],
+["A->D", "AG->B", "B->G", "B->E", "E->B", "E->F"], ["A->B", "CD->A", "CB->D", "CE->D", "AE->F"]]
+K=[["A"], ["AC", "BC"], ["A", "B", "C", "E"], ["ACG", "ACB", "ACE"], ["CE"]]
+
+print("Seminar iz Baza Podataka 2.\nNormalizacija u 3. Normalnu formu")
+while(True):
+    print()
+    for i in range(len(R)):
+        print(str(i + 1) + ".\n" +
+        "R: " + R[i]+ "\n" +
+        "Fmin: " + ', '.join(Fmin[i]) +
+        "\nK: " + ', '.join(K[i]) + "\n")
+
+    userChoice = input("Upisite zeljenu operaciju: ")
+    if (userChoice.lower() == "dodaj"):
+        pass #Unos
+
+    elif (userChoice.lower() == "makni"):
+        pass #Brisanje
+
+    elif (userChoice.lower() == "izvedi"):
+        for i in range(len(R)):
+            print(str(i + 1) + ".\n" +
+            "R: " + R[i]+ "\n" +
+            "Fmin: " + ', '.join(Fmin[i]) +
+            "\nK: " + ', '.join(K[i]) + "\n")
+            if checkForm(R[i], Fmin[i], K[i]):
+                print("Vec je u 3. NF")
+
+            else:
+                print(normalize(R[i], Fmin[i], K[i]))
+
+            print()
+        break
+
+    elif (userChoice.lower() == "kraj"):
+        break
