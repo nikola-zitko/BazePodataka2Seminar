@@ -14,13 +14,14 @@ def convertTuple(tup):
     return str
 
 
-
-R = ["ABCD","ABCDE","ABCDEFGH","AB","ABCDE","ABCDEF","ABC","ABCDEFGHI","ABCDE","ABCD"]
-Fmin = [["A->B", "A->C"],["AB->D","B->E","C->AB"],["AB->E","C->FG","E->AH"],["A->A","A->B","B->A","B->B"],["A->BC","C->E","D->E","B->D"],
-["A->BCD","B->E","C->DEF","EF->BD"],["A->B","C->AB","B->BC"],["A->BCD","BC->ADE","FAG->A","EF->G","F->A"],["A->E","B->D","C->C","E->AB"],["A->A","B->B","C->C","D->D","ABCD->ABCD"]]
+#"U svakoj shemi se nalazi minimalno deset atributa i minimalno pet funkcionalnih ovisnosti"
+R = ["ABCDEFGHIJ","ABCDEFGHIJK","ABCDEFGHIJKLMNO","ABCDEFGHIJKLMNOP","ABCDEFGHIJKL","ABCDEFGHIJ","ABCDEFGHIJKLMNOPRS","ABCDEFGHIJK","ABCDEFGHIJKLM","ABCDEFGHIJKL"]
+Fmin = [["A->B", "A->C", "B->CD", "G->ABC", "HI->DEFJ", "J->AB", "F->GHI"],["AB->D","B->E","C->AB", "DF->GHK", "DEI->ABC", "BH->JKA", "I->AK"],["AB->EF","CD->FGEH","EO->AHIJK", "L->MN", "N->ABCDEF", "KM->GHIAC", "F->MNO"],["A->A","A->B","B->A","B->B", "CD->ABCDEFGHIJKL", "ME->NOP", "D->M"],["A->BCE","C->EH","DFG->IJKL","L->AB", "B->DEL"],
+["A->BCDE","BCD->EFG","CH->I","D->AI", "FA->GHAC"],["A->BCDE","C->AEFGHIJK","K->LMNAOP", "EF->AOKC", "P->AB", "DE->PC"],["AEI->JAC","DE->IFGHA","FAG->A","EFI->DECAB","F->AIJFB"],["BM->JKLADE","MD->FKLJ","G->BCDEF","FI->HIJK", "CE->BMDIF"],["A->B","B->C","C->D","D->E","E->F", "F->G", "G->H", "H->I", "I->J", "J->ABCDEFGHI", "L->J"]]
 canonical_form = []
 
 mainmenu(R, Fmin)
+
 odabir = int(input("Unesite broj R sheme: "))
 
 Fmin = Fmin[odabir-1]
@@ -38,16 +39,16 @@ print(Fmin)
 print(canonical_form)
 
 RodF = ""
-for att in canonical_form:
-    x = att.split('->')
+for fo in canonical_form:
+    x = fo.split('->')
     if(x[0] not in RodF):
         RodF = RodF + x[0]
     if(x[1] not in RodF):
         RodF = RodF + x[1]
 
-print("RodF je ")
-RodF = ''.join(sorted(RodF))
-print(RodF)
+#"set" predefinirana python funkcija izbaci sve nejedinstvene znakove iz stringa, npr "AABBCCDDDDEFG" pretvara u "ABCDEFG"
+RodF = ''.join(sorted(set(RodF)))
+print("R od F je: " + RodF)
 
 K1 = R
 K1=K1.replace(RodF,'')
@@ -78,7 +79,7 @@ potential_key_candidates = []
 for att in range(1, len(L)+1):
     for subset in itertools.combinations(L, att):
         potential_key_candidates.append(convertTuple(subset))
-print("Key candidates: " + ', '.join(potential_key_candidates))
+#print("Key candidates: " + ', '.join(potential_key_candidates))
 
 K = []
 tmp = []
