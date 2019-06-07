@@ -87,21 +87,25 @@ def normalize(R, Fmin, K):
 
 #Glavni program
 
-R = ["ABC", "ABCD", "ABCDEF","ABCDEFG", "ABCDEF"]
-Fmin = [["A->B","B->C"], ["AC->B", "C->D", "B->A"], ["A->B", "A->CD", "A->C", "C->BF", "E->BD"],
-["A->D", "AG->B", "B->G", "B->E", "E->B", "E->F"], ["A->B", "CD->A", "CB->D", "CE->D", "AE->F"]]
-K=[["A"], ["AC", "BC"], ["A", "B", "C", "E"], ["ACG", "ACB", "ACE"], ["CE"]]
+R = ["ABCDEFGHIJKLMNOPRS", "ABCDEFGHIJKLM", "ABCDEFGHIJKLMNO","ABCDEFGHIJKLMNOP","ABCDEFGHIJKL"]
+Fmin = [
+    ["A->BCDE","C->AEFGHIJK","K->LMNAOP", "EF->AOKC", "P->AB", "DE->PC"],
+    ["BM->JKLADE","MD->FKLJ","G->BCDEF","FI->HIJK", "CE->BMDIF"],
+    ["AB->EF","CD->FGEH","EO->AHIJK", "L->MN", "N->ABCDEF", "KM->GHIAC", "F->MNO"],
+    ["A->A","A->B","B->A","B->B", "CD->ABCDEFGHIJKL", "ME->NOP", "D->M"],
+    ["A->BCE","C->EH","DFG->IJKL","L->AB", "B->DEL"]]
+K = [["ARS", "CRS", "KRS"], ["BMGFI", "BMGCE"], ["EOL"], ["CDME"], ["DFG"]]
 
 print("Seminar iz Baza Podataka 2.\nNormalizacija u 3. Normalnu formu")
 while(True):
-    print()
+    print("Relacijske sheme su: ")
     for i in range(len(R)):
         print(str(i + 1) + ".\n" +
         "R: " + R[i]+ "\n" +
         "Fmin: " + ', '.join(Fmin[i]) +
         "\nK: " + ', '.join(K[i]) + "\n")
 
-    print('Operacije su "Dodaj", "Izbrisi" i "Pokreni".')
+    print('Operacije su "Dodaj", "Izbrisi", "Pokreni" i "Kraj".')
     userChoice = input("Upisite zeljenu operaciju: ")
     if (userChoice.lower() == "dodaj"):
         #Unos
@@ -128,32 +132,40 @@ while(True):
         #Brisanje izabranog elemenata
         isValidInput = False;
         while not isValidInput:
-            izbor=int(input("Unesite broj RS koje zelite izbrisati: "))
-            if (izbor > 0 and izbor <= len(R)):
-                izbor -= 1
+            userIndexChoice=int(input("Unesite broj RS koje zelite izbrisati: "))
+            if (userIndexChoice > 0 and userIndexChoice <= len(R)):
+                userIndexChoice -= 1
                 isValidInput = True
             else:
                 print("Unesite ispravan broj.")
 
-        del R[izbor]
-        del Fmin[izbor]
-        del K[izbor]
+        del R[userIndexChoice]
+        del Fmin[userIndexChoice]
+        del K[userIndexChoice]
 
     elif (userChoice.lower() == "pokreni"):
-        for i in range(len(R)):
-            print(str(i + 1) + ".\n" +
-            "R: " + R[i]+ "\n" +
-            "Fmin: " + ', '.join(Fmin[i]) +
-            "\nK: " + ', '.join(K[i]) + "\n")
-            if checkForm(R[i], Fmin[i], K[i]):
-                print("\nVec je u 3. NF")
 
+        isValidInput = False;
+        while not isValidInput:
+            userIndexChoice=int(input("Unesite broj RS koje zelite dekompozirati: "))
+            if (userIndexChoice > 0 and userIndexChoice <= len(R)):
+                userIndexChoice -= 1
+                isValidInput = True
             else:
-                print()
-                print('Novi R je: ' + ', '.join(normalize(R[i], Fmin[i], K[i])))
+                print("Unesite ispravan broj.")
 
+        print(str(userIndexChoice + 1) + ".\n" +
+        "R: " + R[userIndexChoice]+ "\n" +
+        "Fmin: " + ', '.join(Fmin[userIndexChoice]) +
+        "\nK: " + ', '.join(K[userIndexChoice]) + "\n")
+        if checkForm(R[userIndexChoice], Fmin[userIndexChoice], K[userIndexChoice]):
+            print("\nVec je u 3. NF")
+
+        else:
             print()
-        break
+            print('Novi R je: ' + ', '.join(normalize(R[userIndexChoice], Fmin[userIndexChoice], K[userIndexChoice])))
+
+        print()
 
     elif (userChoice.lower() == "kraj"):
         break
